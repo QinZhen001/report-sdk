@@ -1,6 +1,6 @@
 {
-  "name": "report-sdk",
-  "version": "1.0.0",
+  "name": "agreport-sdk",
+  "version": "0.0.1",
   "description": "a report sdk",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -15,8 +15,14 @@
     "es"
   ],
   "scripts": {
+    "build": "run-s clean && run-p build:cjs build:mjs build:umd",
+    "build:cjs": "rollup --config ./scripts/rollup-cjs.config.js && run-s entry:cjs",
+    "build:mjs": "rollup --config ./scripts/rollup-mjs.config.js && run-s entry:mjs",
+    "build:umd": "rollup --config ./scripts/rollup-umd.config.js",
     "build:docs":"",
+    "playground:build":"playground:* ",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf ./dist ./lib ./es",
     "version": "auto-changelog -p && git add CHANGELOG.md",
     "release": "bumpp --commit --push --tag && npm publish"
   },
