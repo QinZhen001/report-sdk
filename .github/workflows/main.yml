@@ -29,11 +29,11 @@ jobs:
       - name: Install and Build
         run: |
           npm install
-          npm run build:storybook
+          npm run build:docs
 
       # Runs a set of commands using the runners shell
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
           branch: main # The branch the action should deploy to.
-          folder: dist # The folder the action should deploy.
+          folder: docs # The folder the action should deploy.
