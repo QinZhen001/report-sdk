@@ -16,17 +16,19 @@
   ],
   "scripts": {
     "build": "run-s clean && run-p build:cjs build:mjs build:umd",
-    "build:cjs": "rollup --config ./scripts/rollup-cjs.config.js && run-s entry:cjs",
-    "build:mjs": "rollup --config ./scripts/rollup-mjs.config.js && run-s entry:mjs",
+    "build:cjs": "rollup --config ./scripts/rollup-cjs.config.js",
+    "build:mjs": "rollup --config ./scripts/rollup-mjs.config.js",
     "build:umd": "rollup --config ./scripts/rollup-umd.config.js",
-    "build:docs":"",
-    "playground:build":"playground:* ",
+    "build:docs": "",
+    "playground:build": "playground:* ",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf ./dist ./lib ./es",
     "version": "auto-changelog -p && git add CHANGELOG.md",
-    "release": "bumpp --commit --push --tag && npm publish"
+    "release": "bumpp --commit --push --tag && npm publish",
+    "lint": "eslint --cache .",
+    "lint:fix": "npm run lint --fix"
   },
-  "devDependencies":{
+  "devDependencies": {
     "@babel/core": "^7.16.12",
     "@babel/plugin-transform-runtime": "^7.19.6",
     "@babel/preset-env": "^7.16.11",
@@ -44,9 +46,17 @@
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
     "bumpp": "^8.2.1",
-    "auto-changelog": "^2.4.0"
+    "auto-changelog": "^2.4.0",
+    "@rollup/plugin-babel": "^6.0.2",
+    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-typescript": "^9.0.2",
+    "@rollup/plugin-terser": "^0.1.0",
+    "rollup": "^3.2.3",
+    "rollup-plugin-inject-process-env": "^1.3.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4"
   },
-  "dependencies":{},
+  "dependencies": {},
   "gitHooks": {
     "pre-commit": "lint-staged"
   },

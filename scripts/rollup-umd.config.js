@@ -5,8 +5,6 @@ const commonjs = require('@rollup/plugin-commonjs');
 const resolve = require('@rollup/plugin-node-resolve');
 const typescript = require('@rollup/plugin-typescript');
 const terser = require('@rollup/plugin-terser');
-const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
 
 const path = require('path');
 const { ROOT_PATH, SRC_PATH, transformCamelCase } = require('./utils/index');
@@ -14,16 +12,12 @@ const { name } = require('../package.json');
 const { getBabelOutputPlugin } = babel;
 
 module.exports = {
-  input: path.resolve(SRC_PATH, 'components/index.tsx'),
+  input: path.resolve(SRC_PATH, 'index.ts'),
   output: {
     file: `dist/index.js`,
     format: 'umd',
-    name: transformCamelCase(name),
+    name,
     // sourcemap: 'inline',
-    globals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-    },
   },
   plugins: [
     typescript({
@@ -44,5 +38,4 @@ module.exports = {
     }),
     // terser(),
   ],
-  external: ['react', 'react-dom'],
 };

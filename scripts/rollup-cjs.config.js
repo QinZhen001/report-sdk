@@ -5,18 +5,19 @@ const typescript = require('@rollup/plugin-typescript');
 const babel = require('@rollup/plugin-babel');
 
 const path = require('path');
-const { ROOT_PATH, SRC_PATH, getEntry } = require('./utils/index');
+const { ROOT_PATH, SRC_PATH } = require('./utils/index');
 
-const inputs = getEntry();
-
-const configs = Object.keys(inputs).map((key) => ({
-  input: inputs[key],
+const configs = {
+  input: path.resolve(SRC_PATH, 'index.ts'),
   output: {
-    file: `lib/${key}.js`,
+    file: `lib/index.js`,
     format: 'cjs',
   },
   plugins: [
-    typescript(),
+    typescript({
+      declaration: false,
+      declarationDir: null,
+    }),
     resolve(),
     commonjs(),
     babel({
@@ -26,7 +27,6 @@ const configs = Object.keys(inputs).map((key) => ({
     }),
     // terser(),
   ],
-  external: ['react', 'react-dom'],
-}));
+};
 
 module.exports = configs;
