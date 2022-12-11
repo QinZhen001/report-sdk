@@ -1,5 +1,5 @@
 {
-  "name": "agreport-sdk",
+  "name": "ag-report-sdk",
   "version": "0.0.1",
   "description": "a report sdk",
   "main": "lib/index.js",
@@ -15,6 +15,7 @@
     "es"
   ],
   "scripts": {
+    "dev:umd": "rollup --config ./scripts/rollup-umd.config.js --watch",
     "build": "run-s clean && run-p build:cjs build:mjs build:umd",
     "build:cjs": "rollup --config ./scripts/rollup-cjs.config.js",
     "build:mjs": "rollup --config ./scripts/rollup-mjs.config.js",
@@ -56,7 +57,9 @@
     "rollup-plugin-inject-process-env": "^1.3.1",
     "rollup-plugin-peer-deps-external": "^2.2.4"
   },
-  "dependencies": {},
+  "dependencies": {
+    "web-vitals": "^3.1.0"
+  },
   "gitHooks": {
     "pre-commit": "lint-staged"
   },

@@ -16,7 +16,7 @@ module.exports = {
   output: {
     file: `dist/index.js`,
     format: 'umd',
-    name,
+    name: transformCamelCase(name),
     // sourcemap: 'inline',
   },
   plugins: [

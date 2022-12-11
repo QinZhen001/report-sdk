@@ -15,9 +15,12 @@
       margin: 0;
     }
 
+    button {
+      margin: 10px;
+    }
+
   </style>
 
-  <link rel="stylesheet" type="text/css" href="../../dist/index.css"/>
 </head>
 
 <body>
@@ -26,18 +29,110 @@
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="../../dist/index.js"></script>
+
 
   <!-- CDN Link: https://unpkg.com/ -->
   <!-- <script src="https://unpkg.com/test-aaa-ui-kit@0.1.3/dist/index.js"></script> -->
 
+  <script src="../../dist/index.js"></script>
+  <script src="./utils/index.js"></script>
+
   <script type="text/babel">
-    const { Calendar, Button } = window.testAaaUiKit || {}
+    const findTarget = (className) => {
+      const TargetElementFilter = ['export_btn']
+      const arr = className.split(" ")
+      return TargetElementFilter.find((filter) => arr.find((v) => filter === v));
+    }
+
+
+    const { AgoraReportSDK } = window.agReportSdk;
+    const sdk = new AgoraReportSDK({
+      appId: 'application_id',
+      baseUrl: 'http://example.com/collect',
+      onPageShow: () => {
+        console.log("onPageShow PV / UV ")
+      },
+      onPagesHide: () => {
+        console.log('onPagesHide time: ', sdk.timeOnPage)
+        debugger
+      }
+    })
+    window.sdk = sdk
+
+    // 监听全局错误
+    window.addEventListener('error', (reason) => {
+      console.log("reason", reason)
+      const { filename, message, error } = reason;
+      sdk.errorReport({
+        data: {
+          filename,
+          message,
+          error
+        }
+      });
+    })
+
+
+    window.addEventListener('unhandledrejection', (e) => {
+      console.log("listen unhandledrejection", e)
+      const { timeStamp, type, reason } = e;
+      sdk.errorReport({
+        data: {
+          timeStamp,
+          type,
+          message: reason?.message,
+          stack: reason?.stack
+        }
+      });
+      // https://github.com/justjavac/the-front-end-knowledge-you-may-not-know/issues/7
+      // 禁用DevTools此错误信息
+      e.preventDefault();
+    })
+
+
+    // 全局 click监听
+    document.addEventListener('click', (e) => {
+      const { id, className, outerHTML } = e.target
+      const isTarget = findTarget(className)
+      if (isTarget) {
+        SDK.actionReport({
+          data: {
+            id,
+            className,
+            outerHTML
+          }, // 其他必要传递的信息
+        })
+      }
+    })
+
+
+    // 触发error
+    const onClickErr = () => {
+      const obj = {}
+      const aaa = obj.ccc.ddd()
+      console.log(aaa)
+    }
+
+    const onClickUnhandledRejection = () => {
+      var rejectedPromise = Promise.reject('Error at ' +
+        new Date().toLocaleTimeString());
+      // mockReject().then(res=>{
+      //   console.log("resolve ",res)
+      // })
+      // .catch(err => {
+      //   console.error("reject err ",err)
+      //   throw  new Error('unhandledrejection error');
+      // })
+    }
+
+
     const root = ReactDOM.createRoot(document.getElementById("app"));
     root.render(
       <div>
-        <Calendar />
-        <Button />
+        <div class="test1 test2" id="test3">test</div>
+        <button class="export_btn xxx" id="asd">交互式触发埋点</button>
+        <button onClick={onClickErr}>触发error</button>
+        <button onClick={onClickUnhandledRejection}>触发unhandledrejection</button>
       </div>
     )
   </script>
