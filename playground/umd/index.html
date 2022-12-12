@@ -26,6 +26,7 @@
 <body>
   <div id="app"></div>
 
+  <script src="../../dist/index.js"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -34,7 +35,7 @@
   <!-- CDN Link: https://unpkg.com/ -->
   <!-- <script src="https://unpkg.com/test-aaa-ui-kit@0.1.3/dist/index.js"></script> -->
 
-  <script src="../../dist/index.js"></script>
+
   <script src="./utils/index.js"></script>
 
   <script type="text/babel">
@@ -60,17 +61,28 @@
     window.sdk = sdk
 
     // 监听全局错误
-    window.addEventListener('error', (reason) => {
-      console.log("reason", reason)
-      const { filename, message, error } = reason;
-      sdk.errorReport({
-        data: {
-          filename,
-          message,
-          error
-        }
-      });
-    })
+    window.addEventListener('error', (event) => {
+      if (event instanceof ErrorEvent) {
+        console.log("脚本错误 ", event)
+        const { filename, message, error } = event;
+        sdk.errorReport({
+          data: {
+            filename,
+            message,
+            error
+          }
+        });
+      } else if (event instanceof Event) {
+        console.log('资源错误', event)
+        const { target, path } = event;
+        sdk.errorReport({
+          data: {
+            target,
+            path,
+          }
+        });
+      }
+    }, true)
 
 
     window.addEventListener('unhandledrejection', (e) => {
@@ -113,9 +125,11 @@
       console.log(aaa)
     }
 
+    // 触发unhandledrejection
     const onClickUnhandledRejection = () => {
       var rejectedPromise = Promise.reject('Error at ' +
         new Date().toLocaleTimeString());
+
       // mockReject().then(res=>{
       //   console.log("resolve ",res)
       // })
@@ -125,14 +139,28 @@
       // })
     }
 
+    // 触发资源加载失败
+    const onClickSourceErr = () => {
+      const img = new Image();
+      img.onload = (e) => {
+        console.log("img onload ", e)
+      }
+      img.onerror = (e) => {
+        console.log("img onerror ", e)
+      }
+      img.src = 'image1.png';
+      document.body.appendChild(img);
+
+    }
 
     const root = ReactDOM.createRoot(document.getElementById("app"));
     root.render(
       <div>
         <div class="test1 test2" id="test3">test</div>
         <button class="export_btn xxx" id="asd">交互式触发埋点</button>
-        <button onClick={onClickErr}>触发error</button>
+        <button onClick={onClickErr}>触发js error</button>
         <button onClick={onClickUnhandledRejection}>触发unhandledrejection</button>
+        <button onClick={onClickSourceErr}>触发资源加载error</button>
       </div>
     )
   </script>

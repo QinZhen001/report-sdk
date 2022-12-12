@@ -136,3 +136,6 @@ export class AgoraReportSDK {
     });
   }
 }
+
+
+export default AgoraReportSDK
