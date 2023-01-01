@@ -1,4 +1,5 @@
 import { jsx, css, Global, ClassNames } from '@emotion/react';
+import ErrorStackParser from 'error-stack-parser';
 
 const anotherStyle = css({
   textDecoration: 'underline',
@@ -10,11 +11,23 @@ const AnotherComponent = () => (
   </div>
 );
 
+const TestComponent = () => {
+  const onClick = () => {
+    console.log('click');
+    const err = new Error('test');
+    const res = ErrorStackParser.parse(err);
+    console.log('res', res);
+    throw err;
+  };
+
+  return <div onClick={onClick}>test</div>;
+};
+
 function App() {
   return (
     <div className="App">
-      111
       <AnotherComponent></AnotherComponent>
+      <TestComponent></TestComponent>
     </div>
   );
 }

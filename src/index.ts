@@ -1,6 +1,9 @@
 import { onCLS, onFID, onLCP, onFCP, onTTFB } from 'web-vitals';
+import ErrorStackParser from 'error-stack-parser';
 
-interface SDKConfig {
+const DEFAULT_BASE_URL = 'http://localhost:8083/reportData';
+
+export interface SDKConfig {
   appId: string;
   baseUrl?: string;
   onPageShow?: () => void;
@@ -41,7 +44,7 @@ export class AgoraReportSDK {
   onPagesHide;
 
   constructor(options: SDKConfig) {
-    const { appId, baseUrl = '', onPageShow = NOOP, onPagesHide = NOOP } = options;
+    const { appId, baseUrl = DEFAULT_BASE_URL, onPageShow = NOOP, onPagesHide = NOOP } = options;
     this.appId = appId;
     this.baseUrl = baseUrl;
     this.onPageShow = onPageShow;
@@ -129,13 +132,18 @@ export class AgoraReportSDK {
   }
 
   // 错误警告上报
-  errorReport(config: any) {
+  errorReport(err: Error) {
+    const stackFrame = ErrorStackParser.parse(err)[0];
+    const { fileName, columnNumber, lineNumber } = stackFrame;
+
     this.report({
-      ...config,
+      message: err.message,
+      fileName,
+      line: lineNumber,
+      column: columnNumber,
       type: 'error',
     });
   }
 }
 
-
-export default AgoraReportSDK
+export default AgoraReportSDK;
